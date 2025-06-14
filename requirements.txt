@@ -1,0 +1,5 @@
+streamlit>=1.30
+streamlit-authenticator
+pandas
+Pillow
+requests
