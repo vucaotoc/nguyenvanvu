@@ -1,51 +1,34 @@
 import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
 
-# --- Page Config ---
-st.set_page_config(page_title="Login Page", page_icon="🔐", layout="centered")
+# --- Page Setup ---
+st.set_page_config(page_title="📊 Visualization", layout="wide")
 
-# --- CSS Styling ---
-page_bg = """
-<style>
-body {
-    background-color: #f0f2f6;
-}
-div.stButton > button {
-    width: 100%;
-    background-color: red;
-    color: white;
-}
-.login-box {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 15px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    width: 300px;
-    margin: auto;
-}
-h2 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: #333;
-}
-</style>
-"""
-st.markdown(page_bg, unsafe_allow_html=True)
+st.title("📈 Laptop Sales Visualization")
 
-# --- HTML Content ---
-st.markdown("<div class='login-box'>", unsafe_allow_html=True)
-st.markdown("<h2>🔐 Login</h2>", unsafe_allow_html=True)
+# --- Sample Data ---
+@st.cache_data
+def load_data():
+    data = {
+        "Laptop": ["Dell XPS", "MacBook Air", "HP Pavilion", "Lenovo X1", "Asus ZenBook"],
+        "Sales": [150, 200, 180, 220, 170]
+    }
+    return pd.DataFrame(data)
 
-# --- Streamlit Inputs ---
-username = st.text_input("Username", placeholder="Enter your username")
-password = st.text_input("Password", type="password", placeholder="Enter your password")
-login_btn = st.button("Login")
+df = load_data()
 
-# --- Simple Authentication Logic ---
-if login_btn:
-    if username == "admin" and password == "1234":
-        st.success("✅ Login successful!")
-        st.balloons()
-    else:
-        st.error("❌ Invalid credentials. Try again.")
+# --- Bar Chart ---
+st.subheader("🛍️ Sales by Product")
+fig1, ax1 = plt.subplots()
+ax1.bar(df["Laptop"], df["Sales"])
+ax1.set_ylabel("Units Sold")
+ax1.set_title("Laptop Sales Bar Chart")
+st.pyplot(fig1)
 
-st.markdown("</div>", unsafe_allow_html=True)
+# --- Pie Chart ---
+st.subheader("📊 Market Share")
+fig2, ax2 = plt.subplots()
+ax2.pie(df["Sales"], labels=df["Laptop"], autopct="%1.1f%%", startangle=90)
+ax2.axis("equal")
+st.pyplot(fig2)
