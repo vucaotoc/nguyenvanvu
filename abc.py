@@ -1,31 +1,54 @@
+# ecommerce_laptop_app.py
 import streamlit as st
 
-# Dummy user database
-users = {
-    "admin": "admin123",
-    "user": "user123"
-}
+# Sample data
+laptops = [
+    {"name": "Dell XPS 13", "price": 999, "brand": "Dell"},
+    {"name": "MacBook Air M2", "price": 1199, "brand": "Apple"},
+    {"name": "HP Pavilion", "price": 750, "brand": "HP"},
+    {"name": "Lenovo ThinkPad X1", "price": 1300, "brand": "Lenovo"},
+    {"name": "Asus ZenBook", "price": 950, "brand": "Asus"},
+]
 
-def login(username, password):
-    return users.get(username) == password
+# Initialize session state for cart
+if "cart" not in st.session_state:
+    st.session_state.cart = []
 
-def main():
-    st.set_page_config(page_title="Login Page", layout="centered")
+st.title("💻 Laptop eCommerce App")
 
-    st.title("🔐 Login Page")
+# Sidebar filter
+brands = list(set([l["brand"] for l in laptops]))
+selected_brand = st.sidebar.selectbox("Filter by brand", ["All"] + brands)
 
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    login_button = st.button("Login")
+# Filter laptops
+if selected_brand != "All":
+    filtered_laptops = [l for l in laptops if l["brand"] == selected_brand]
+else:
+    filtered_laptops = laptops
 
-    if login_button:
-        if login(username, password):
-            st.success(f"Welcome, {username}!")
-            st.balloons()
-            # Place the main app here after login
-            st.write("You can now access the application.")
-        else:
-            st.error("Invalid username or password")
+st.subheader("Available Laptops")
 
-if __name__ == "__main__":
-    main()
+# Product display
+for laptop in filtered_laptops:
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.write(f"**{laptop['name']}**")
+        st.write(f"Brand: {laptop['brand']}")
+        st.write(f"Price: ${laptop['price']}")
+    with col2:
+        if st.button(f"🛒 Add to Cart - {laptop['name']}"):
+            st.session_state.cart.append(laptop)
+            st.success(f"Added {laptop['name']} to cart!")
+
+# Cart section
+st.sidebar.subheader("🛍️ Shopping Cart")
+total = sum(item["price"] for item in st.session_state.cart)
+for item in st.session_state.cart:
+    st.sidebar.write(f"- {item['name']} (${item['price']})")
+st.sidebar.write("---")
+st.sidebar.write(f"**Total: ${total}**")
+
+# Clear cart button
+if st.sidebar.button("❌ Clear Cart"):
+    st.session_state.cart.clear()
+    st.sidebar.success("Cart cleared!")
