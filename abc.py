@@ -11,7 +11,7 @@ body {
 }
 div.stButton > button {
     width: 100%;
-    background-color: #4CAF50;
+    background-color: red;
     color: white;
 }
 .login-box {
