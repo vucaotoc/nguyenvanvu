@@ -1,54 +1,51 @@
-# ecommerce_laptop_app.py
 import streamlit as st
 
-# Sample data
-laptops = [
-    {"name": "Dell XPS 13", "price": 999, "brand": "Dell"},
-    {"name": "MacBook Air M2", "price": 1199, "brand": "Apple"},
-    {"name": "HP Pavilion", "price": 750, "brand": "HP"},
-    {"name": "Lenovo ThinkPad X1", "price": 1300, "brand": "Lenovo"},
-    {"name": "Asus ZenBook", "price": 950, "brand": "Asus"},
-]
+# --- Page Config ---
+st.set_page_config(page_title="Login Page", page_icon="🔐", layout="centered")
 
-# Initialize session state for cart
-if "cart" not in st.session_state:
-    st.session_state.cart = []
+# --- CSS Styling ---
+page_bg = """
+<style>
+body {
+    background-color: #f0f2f6;
+}
+div.stButton > button {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+}
+.login-box {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    width: 300px;
+    margin: auto;
+}
+h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+</style>
+"""
+st.markdown(page_bg, unsafe_allow_html=True)
 
-st.title("💻 Laptop eCommerce App")
+# --- HTML Content ---
+st.markdown("<div class='login-box'>", unsafe_allow_html=True)
+st.markdown("<h2>🔐 Login</h2>", unsafe_allow_html=True)
 
-# Sidebar filter
-brands = list(set([l["brand"] for l in laptops]))
-selected_brand = st.sidebar.selectbox("Filter by brand", ["All"] + brands)
+# --- Streamlit Inputs ---
+username = st.text_input("Username", placeholder="Enter your username")
+password = st.text_input("Password", type="password", placeholder="Enter your password")
+login_btn = st.button("Login")
 
-# Filter laptops
-if selected_brand != "All":
-    filtered_laptops = [l for l in laptops if l["brand"] == selected_brand]
-else:
-    filtered_laptops = laptops
+# --- Simple Authentication Logic ---
+if login_btn:
+    if username == "admin" and password == "1234":
+        st.success("✅ Login successful!")
+        st.balloons()
+    else:
+        st.error("❌ Invalid credentials. Try again.")
 
-st.subheader("Available Laptops")
-
-# Product display
-for laptop in filtered_laptops:
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        st.write(f"**{laptop['name']}**")
-        st.write(f"Brand: {laptop['brand']}")
-        st.write(f"Price: ${laptop['price']}")
-    with col2:
-        if st.button(f"🛒 Add to Cart - {laptop['name']}"):
-            st.session_state.cart.append(laptop)
-            st.success(f"Added {laptop['name']} to cart!")
-
-# Cart section
-st.sidebar.subheader("🛍️ Shopping Cart")
-total = sum(item["price"] for item in st.session_state.cart)
-for item in st.session_state.cart:
-    st.sidebar.write(f"- {item['name']} (${item['price']})")
-st.sidebar.write("---")
-st.sidebar.write(f"**Total: ${total}**")
-
-# Clear cart button
-if st.sidebar.button("❌ Clear Cart"):
-    st.session_state.cart.clear()
-    st.sidebar.success("Cart cleared!")
+st.markdown("</div>", unsafe_allow_html=True)
